@@ -24,7 +24,7 @@ import {
 import { Separator } from "@radix-ui/react-dropdown-menu";
 
 const Navbar = () => {
-  const user = 0;
+  const user = 1;
   return (
     <div className="h-16 dark:bg-[#020817] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0 duration-300 z-10">
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center gap-10 h-full">

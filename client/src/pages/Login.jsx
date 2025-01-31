@@ -93,7 +93,7 @@ const Login = () => {
             <CardHeader>
               <CardTitle>Signup</CardTitle>
               <CardDescription>
-                Click a new account and click signup when you're done.
+                Create a new account and click signup when you're done.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">

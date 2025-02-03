@@ -26,3 +26,24 @@ export const createCourse = async (req, res) => {
     });
   }
 };
+
+export const getCreaterCourses = async (req, res) => {
+  try {
+    const userId = req.id;
+    const courses = await Course.find({ creator: userId });
+    if (!courses) {
+      res.status(404).json({
+        courses: [],
+        message: "Courses not found",
+      });
+    }
+    return res.status(200).json({
+      courses,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed to get course",
+    });
+  }
+};

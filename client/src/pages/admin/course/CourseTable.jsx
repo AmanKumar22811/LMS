@@ -44,7 +44,7 @@ const CourseTable = () => {
               </TableCell>
               <TableCell>{course?.courseTitle}</TableCell>
               <TableCell className="text-right">
-                <Button size="sm">
+                <Button size="sm" onClick={() => navigate(`${course?._id}`)}>
                   <Edit />
                 </Button>
               </TableCell>

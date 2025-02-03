@@ -3,6 +3,7 @@ import isAuthenticated from "../middelwares/isAuthenticated.middleware.js";
 import {
   createCourse,
   editCourse,
+  getCourseById,
   getCreaterCourses,
 } from "../controllers/course.controller.js";
 import upload from "../utils/multer.js";
@@ -13,5 +14,6 @@ router.route("/").get(isAuthenticated, getCreaterCourses);
 router
   .route("/:courseId")
   .put(isAuthenticated, upload.single("courseThumbnail"), editCourse);
+router.route("/:courseId").get(isAuthenticated, getCourseById);
 
 export default router;

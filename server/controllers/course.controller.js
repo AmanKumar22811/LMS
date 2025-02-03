@@ -19,13 +19,13 @@ export const createCourse = async (req, res) => {
     return res.status(201).json({
       course,
       success: true,
-      message: "Course created",
+      message: "Course created.",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to create course",
+      message: "Failed to create course.",
     });
   }
 };
@@ -38,7 +38,7 @@ export const getCreaterCourses = async (req, res) => {
       res.status(404).json({
         courses: [],
         success: false,
-        message: "Courses not found",
+        message: "Courses not found.",
       });
     }
     return res.status(200).json({
@@ -49,7 +49,7 @@ export const getCreaterCourses = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get course",
+      message: "Failed to get course.",
     });
   }
 };
@@ -103,14 +103,38 @@ export const editCourse = async (req, res) => {
       return res.status(200).json({
         course,
         success: true,
-        message: "Course updated successfully",
+        message: "Course updated successfully.",
       });
     }
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get course",
+      message: "Failed to update course.",
+    });
+  }
+};
+
+export const getCourseById = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      course,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get course.",
     });
   }
 };

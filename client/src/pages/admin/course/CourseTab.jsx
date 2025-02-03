@@ -21,7 +21,10 @@ import { Label } from "@/components/ui/label";
 import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEditCourseMutation } from "@/features/api/courseApi";
+import {
+  useEditCourseMutation,
+  useGetCourseByIdQuery,
+} from "@/features/api/courseApi";
 import { toast } from "sonner";
 
 const CourseTab = () => {
@@ -42,6 +45,24 @@ const CourseTab = () => {
 
   const [editCourse, { data, isLoading, isSuccess, error }] =
     useEditCourseMutation();
+
+  const { data: courseByIdData, isLoading: courseByIdIsLoading } =
+    useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
+
+  useEffect(() => {
+    if (courseByIdData?.course) {
+      const course = courseByIdData?.course;
+      setInput({
+        courseTitle: course?.courseTitle,
+        subTitle: course?.subTitle,
+        description: course?.description,
+        category: course?.category,
+        courseLevel: course?.courseLevel,
+        coursePrice: course?.coursePrice,
+        courseThumbnail: "",
+      });
+    }
+  }, [courseByIdData]);
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -89,6 +110,8 @@ const CourseTab = () => {
     }
   }, [error, isSuccess]);
 
+  if (courseByIdIsLoading) return <Loader2 className="h-4 w-4 animate-spin" />;
+
   return (
     <Card>
       <CardHeader className="flex flex-row justify-between">
@@ -132,7 +155,7 @@ const CourseTab = () => {
           <div className="flex items-center gap-5">
             <div>
               <Label>Category</Label>
-              <Select onValueChange={selectCategory}>
+              <Select onValueChange={selectCategory} value={input?.category}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -160,7 +183,10 @@ const CourseTab = () => {
             </div>
             <div>
               <Label>Course Level</Label>
-              <Select onValueChange={selectCourseLevel}>
+              <Select
+                onValueChange={selectCourseLevel}
+                value={input?.courseLevel}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a course level" />
                 </SelectTrigger>

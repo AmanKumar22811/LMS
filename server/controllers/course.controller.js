@@ -1,5 +1,10 @@
 import { Course } from "../models/course.model.js";
-import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
+import { Lecture } from "../models/lecture.model.js";
+import {
+  deleteMediaFromCloudinary,
+  deleteVideoFromClodinary,
+  uploadMedia,
+} from "../utils/cloudinary.js";
 export const createCourse = async (req, res) => {
   try {
     const { courseTitle, category } = req.body;
@@ -134,7 +139,158 @@ export const getCourseById = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Failed to get course.",
+      message: "Failed to get course by ID.",
+    });
+  }
+};
+
+export const createLecture = async (req, res) => {
+  try {
+    const { lectureTitle } = req.body;
+    const { courseId } = req.params;
+
+    if (!lectureTitle || !courseId) {
+      return res.status(400).json({
+        success: true,
+        message: "Lecture title is required.",
+      });
+    }
+
+    const lecture = await Lecture.create({
+      lectureTitle,
+    });
+
+    const course = await Course.findById(courseId);
+
+    if (course) {
+      course.lectures.push(lecture?._id);
+      await course.save();
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "Lecture created successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create lecture.",
+    });
+  }
+};
+
+export const getCourseLecture = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const course = await Course.findById(courseId).populate("lectures");
+    if (!course) {
+      res.status(404).json({
+        success: false,
+        message: "Course not found.",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      lectures: course?.lectures,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get lecture.",
+    });
+  }
+};
+
+export const editLecture = async (req, res) => {
+  try {
+    const { lectureTitle, videoInfo, isPreviewFree } = req.body;
+
+    const { courseId, lectureId } = req.params;
+    const lecture = await Lecture.findById(lectureId);
+    if (!lecture) {
+      return res.status(404).json({
+        message: "Lecture not found!",
+      });
+    }
+
+    if (lectureTitle) lecture.lectureTitle = lectureTitle;
+    if (videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
+    if (videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
+    lecture.isPreviewFree = isPreviewFree;
+
+    await lecture.save();
+
+    const course = await Course.findById(courseId);
+    if (course && !course.lectures.includes(lecture._id)) {
+      course.lectures.push(lecture._id);
+      await course.save();
+    }
+    return res.status(200).json({
+      lecture,
+      message: "Lecture updated successfully.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Failed to edit lecture.",
+    });
+  }
+};
+
+export const removeLecture = async (req, res) => {
+  try {
+    const { lectureId } = req.params;
+    const lecture = await Lecture.findByIdAndDelete(lectureId);
+    if (!lecture) {
+      return res.status(404).json({
+        success: false,
+        message: "Lecture not found!",
+      });
+    }
+
+    if (lecture.publicId) {
+      await deleteVideoFromClodinary(lecture.publicId);
+    }
+
+    await Course.updateOne(
+      { lectures: lectureId },
+      { $pull: { lectures: lectureId } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Lecture remove successfully.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to remove lecture.",
+    });
+  }
+};
+
+export const getLectureById = async (req, res) => {
+  try {
+    const { lectureId } = req.params;
+    const lecture = await Lecture.findById(lectureId);
+
+    if (!lecture) {
+      return res.status(404).json({
+        status: false,
+        message: "Lecture not found!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      lecture,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get lecture by id.",
     });
   }
 };

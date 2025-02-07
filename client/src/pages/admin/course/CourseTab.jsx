@@ -218,7 +218,7 @@ const CourseTab = () => {
               type="file"
               accept="image/*"
               onChange={selectThumbnail}
-              className="w-fit"
+              className="w-fit cursor-pointer"
             />
             {previewThumbnail && (
               <img

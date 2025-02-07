@@ -5,6 +5,7 @@ import {
   deleteVideoFromClodinary,
   uploadMedia,
 } from "../utils/cloudinary.js";
+
 export const createCourse = async (req, res) => {
   try {
     const { courseTitle, category } = req.body;
@@ -31,6 +32,31 @@ export const createCourse = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to create course.",
+    });
+  }
+};
+
+export const getPublishedCourse = async (_, res) => {
+  try {
+    const courses = await Course.find({ isPublished: true }).populate({
+      path: "creator",
+      select: "name photoUrl",
+    });
+    if (!courses) {
+      return res.status(404).json({
+        success: false,
+        message: "Courses not found!",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      courses,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get published courses.",
     });
   }
 };

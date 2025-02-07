@@ -18,6 +18,14 @@ export const courseApi = createApi({
       }),
       invalidatesTags: ["Refetch_Creator_Course"],
     }),
+
+    getPublishedCourse: builder.query({
+      query: () => ({
+        url: "/published-courses",
+        method: "GET",
+      }),
+    }),
+
     getCreatorCourse: builder.query({
       query: () => ({
         url: "",
@@ -25,6 +33,7 @@ export const courseApi = createApi({
       }),
       providesTags: ["Refetch_Creator_Course"],
     }),
+
     editCourse: builder.mutation({
       query: ({ formData, courseId }) => ({
         url: `/${courseId}`,
@@ -33,12 +42,14 @@ export const courseApi = createApi({
       }),
       invalidatesTags: ["Refetch_Creator_Course"],
     }),
+
     getCourseById: builder.query({
       query: (courseId) => ({
         url: `/${courseId}`,
         method: "GET",
       }),
     }),
+
     createLecture: builder.mutation({
       query: ({ lectureTitle, courseId }) => ({
         url: `/${courseId}/lecture`,
@@ -46,6 +57,7 @@ export const courseApi = createApi({
         body: { lectureTitle },
       }),
     }),
+
     getCourseLecture: builder.query({
       query: (courseId) => ({
         url: `/${courseId}/lecture`,
@@ -53,6 +65,7 @@ export const courseApi = createApi({
       }),
       providesTags: ["Refetch_Lecture"],
     }),
+
     editLecture: builder.mutation({
       query: ({
         lectureTitle,
@@ -66,6 +79,7 @@ export const courseApi = createApi({
         body: { lectureTitle, videoInfo, isPreviewFree },
       }),
     }),
+
     removeLecture: builder.mutation({
       query: (lectureId) => ({
         url: `/lecture/${lectureId}`,
@@ -73,12 +87,14 @@ export const courseApi = createApi({
       }),
       invalidatesTags: ["Refetch_Lecture"],
     }),
+
     getLectureById: builder.query({
       query: (lectureId) => ({
         url: `/lecture/${lectureId}`,
         method: "GET",
       }),
     }),
+
     publishCourse: builder.mutation({
       query: ({ courseId, query }) => ({
         url: `/${courseId}?publish=${query}`,
@@ -99,4 +115,5 @@ export const {
   useRemoveLectureMutation,
   useGetLectureByIdQuery,
   usePublishCourseMutation,
+  useGetPublishedCourseQuery,
 } = courseApi;

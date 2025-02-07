@@ -34,7 +34,7 @@ const LectureTab = () => {
 
   const { data: lectureData } = useGetLectureByIdQuery(lectureId);
   const lecture = lectureData?.lecture;
-  
+
   useEffect(() => {
     if (lecture) {
       setLectureTitle(lecture?.lectureTitle);
@@ -88,8 +88,6 @@ const LectureTab = () => {
   };
 
   const editLectureHandler = async () => {
-    console.log({ lectureTitle, uploadVideoInfo, isFree, courseId, lectureId });
-
     await editLecture({
       lectureTitle,
       videoInfo: uploadVideoInfo,

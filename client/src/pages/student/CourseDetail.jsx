@@ -9,12 +9,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useGetCourseDetailWithStatusQuery } from "@/features/api/purchaseApi";
 import { BadgeInfo, Lock, PlayCircle } from "lucide-react";
 import React from "react";
 import ReactPlayer from "react-player";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CourseDetail = ({ course }) => {
-  const purchase = 1;
+const CourseDetail = () => {
+  const { courseId } = useParams();
+  const navigate = useNavigate();
+
+  const { data, isLoading, isError } =
+    useGetCourseDetailWithStatusQuery(courseId);
+
+  if (isLoading) return <h1>Loading...</h1>;
+  if (isError) return <h1>Failed to load course details</h1>;
+
+  const { course, purchased } = data;
+  console.log(course);
+
+  const handleContinueCourse = () => {
+    if (purchased) {
+      navigate(`/course-progress/${courseId}`);
+    }
+  };
+
   return (
     <div className="space-y-5">
       <div className="bg-[#2D2F31] text-white">
@@ -22,7 +41,7 @@ const CourseDetail = ({ course }) => {
           <h1 className="font-bold text-2xl md:text-3xl">
             {course?.courseTitle}
           </h1>
-          <p className="text-base md:text-lg">Course Sub-title</p>
+          <p className="text-base md:text-lg">{course?.subTitle}</p>
           <p>
             Created By
             <span className="text-[#C0C4FC] underline italic">
@@ -46,7 +65,9 @@ const CourseDetail = ({ course }) => {
           <Card>
             <CardHeader>
               <CardTitle>Course Content</CardTitle>
-              <CardDescription>4 lecture</CardDescription>
+              <CardDescription>
+                {course?.lectures.length} Lectures :
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {course?.lectures?.map((lecture, index) => (
@@ -67,20 +88,24 @@ const CourseDetail = ({ course }) => {
               <div className="w-full aspect-video mb-4">
                 <ReactPlayer
                   width="100%"
-                  height={"100%"}
+                  height="100%"
                   url={course?.lectures[0]?.videoUrl}
                   controls={true}
                 />
               </div>
-              <h1>Lecture title</h1>
+              <h1>{course?.courseTitle}</h1>
               <Separator className="my-2" />
-              <h1 className="text-lg md:text-xl font-semibold">Course Price</h1>
+              <h1 className="text-lg md:text-xl font-semibold">
+                ₹ {course?.coursePrice}
+              </h1>
             </CardContent>
             <CardFooter className="flex justify-center p-4">
-              {purchase ? (
-                <Button className="w-full">Continue Course</Button>
+              {purchased ? (
+                <Button className="w-full" onClick={handleContinueCourse}>
+                  Continue Course
+                </Button>
               ) : (
-                <BuyCourseButton />
+                <BuyCourseButton courseId={courseId} />
               )}
             </CardFooter>
           </Card>

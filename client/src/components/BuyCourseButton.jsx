@@ -15,22 +15,23 @@ const BuyCourseButton = ({ courseId }) => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } else {
+    if (isSuccess && data?.url) {
+      window.location.href = data.url;
+    } else if (isSuccess && !data?.url) {
       toast.error("Invalid response from server");
     }
-    if (isError) {
+  }, [isSuccess, data]);
+
+  useEffect(() => {
+    if (isError && error) {
       toast.error(error?.data?.message || "Failed to create checkout");
     }
-  }, [isSuccess, isError, error]);
+  }, [isError, error]);
 
   return (
     <Button
       className="w-full"
-      disacbled={isLoading}
+      disabled={isLoading}
       onClick={purchaseCourseHandler}
     >
       {isLoading ? (

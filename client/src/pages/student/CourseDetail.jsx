@@ -43,8 +43,8 @@ const CourseDetail = () => {
           </h1>
           <p className="text-base md:text-lg">{course?.subTitle}</p>
           <p>
-            Created By
-            <span className="text-[#C0C4FC] underline italic">
+            Created By :
+            <span className="text-[#C0C4FC] underline italic p-1">
               {course?.creator?.name}
             </span>
           </p>

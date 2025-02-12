@@ -18,8 +18,10 @@ const SearchResult = ({ course }) => {
           <h1 className="font-bold text-lg md:text-xl">
             {course?.courseTitle}
           </h1>
-          <p className="text-sm text-gray-600">{course?.subTitle}</p>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-600 dark:text-white">
+            {course?.subTitle}
+          </p>
+          <p className="text-sm text-gray-700 dark:text-white">
             Intructor:{" "}
             <span className="font-bold">{course?.creator?.name}</span>{" "}
           </p>

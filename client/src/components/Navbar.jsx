@@ -31,13 +31,14 @@ const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
   const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
   const navigate = useNavigate();
+
   const logoutHandler = async () => {
     await logoutUser();
   };
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data.message || "User Logout");
+      toast.success(data.message || "User Log out");
       navigate("/login");
     }
   }, [isSuccess]);
@@ -106,14 +107,23 @@ const Navbar = () => {
       </div>
       <div className="flex md:hidden items-center justify-between px-4 h-full">
         <h1 className="font-extrabold text-2xl">E-learning</h1>
-        <MobileNavbar />
+        <MobileNavbar user={user} />
       </div>
     </div>
   );
 };
 
-const MobileNavbar = () => {
-  const role = "instructor";
+const MobileNavbar = ({ user }) => {
+  const navigate = useNavigate();
+  const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "User Log out");
+      navigate("/login");
+    }
+  }, [isSuccess]);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -127,19 +137,28 @@ const MobileNavbar = () => {
       </SheetTrigger>
       <SheetContent className="flex flex-col">
         <SheetHeader className="flex flex-row items-center justify-between mt-2">
-          <SheetTitle>E-learning</SheetTitle>
+          <SheetTitle>
+            <Link to="/">E-learning</Link>
+          </SheetTitle>
           <DarkMode />
         </SheetHeader>
         <Separator className="mr-2" />
         <nav className="flex flex-col space-y-4">
-          <span>My-learning</span>
-          <span>Edit profile</span>
-          <span>Log out</span>
+          <Link to="/my-learning">My-learning</Link>
+          <Link to="/profile">Edit profile</Link>
+          <p onClick={() => logoutUser()} className="cursor-pointer">
+            Log out
+          </p>
         </nav>
-        {role === "instructor" && (
+        {user?.role === "instructor" && (
           <SheetFooter>
             <SheetClose asChild>
-              <Button type="submit">Dashboard</Button>
+              <Button
+                type="submit"
+                onClick={() => navigate("/admin/dashboard")}
+              >
+                Dashboard
+              </Button>
             </SheetClose>
           </SheetFooter>
         )}

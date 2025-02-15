@@ -22,7 +22,7 @@ export const courseApi = createApi({
     getSearchCourses: builder.query({
       query: ({ searchQuery, categories, sortByPrice }) => {
         let queryString = `/search?query=${encodeURIComponent(searchQuery)}`;
-        
+
         if (categories && categories.length > 0) {
           const categoriesString = categories.map(encodeURIComponent).join(",");
           queryString += `&categories=${categoriesString}`;
@@ -65,6 +65,13 @@ export const courseApi = createApi({
       query: (courseId) => ({
         url: `/${courseId}`,
         method: "GET",
+      }),
+    }),
+
+    removeCourse: builder.mutation({
+      query: (courseId) => ({
+        url: `/${courseId}`,
+        method: "DELETE",
       }),
     }),
 
@@ -135,4 +142,5 @@ export const {
   useGetLectureByIdQuery,
   usePublishCourseMutation,
   useGetPublishedCourseQuery,
+  useRemoveCourseMutation,
 } = courseApi;

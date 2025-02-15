@@ -16,10 +16,14 @@ import { useNavigate } from "react-router-dom";
 
 const CourseTable = () => {
   const navigate = useNavigate();
+
   const { data, isLoading, refetch } = useGetCreatorCourseQuery();
 
-  if (isLoading) return <h1>Loading...</h1>;
+  useEffect(() => {
+    refetch();
+  }, []);
 
+  if (isLoading) return <h1>Loading...</h1>;
 
   return (
     <div>

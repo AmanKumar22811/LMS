@@ -25,6 +25,7 @@ import {
   useEditCourseMutation,
   useGetCourseByIdQuery,
   usePublishCourseMutation,
+  useRemoveCourseMutation,
 } from "@/features/api/courseApi";
 import { toast } from "sonner";
 
@@ -54,6 +55,16 @@ const CourseTab = () => {
   } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
 
   const [publishCourse] = usePublishCourseMutation();
+
+  const [
+    removeCourse,
+    {
+      data: removeData,
+      isLoading: removeCourseIsloading,
+      isSuccess: removeCourseIsSuccess,
+      error: removeCourseError,
+    },
+  ] = useRemoveCourseMutation();
 
   useEffect(() => {
     if (courseByIdData?.course) {
@@ -119,6 +130,22 @@ const CourseTab = () => {
     }
   };
 
+  const handleRemoveCourse = async () => {
+    await removeCourse(courseId);
+    navigate(-1);
+  };
+
+  useEffect(() => {
+    if (removeCourseIsSuccess) {
+      toast.success(removeData?.message || "Course remove successfully.");
+    }
+    if (removeCourseError) {
+      toast.error(
+        removeCourseError?.data?.message || "Failed to remove course"
+      );
+    }
+  }, [removeCourseIsSuccess, removeCourseError]);
+
   useEffect(() => {
     if (isSuccess) {
       toast.success(data?.message || "Course updated");
@@ -151,7 +178,16 @@ const CourseTab = () => {
           >
             {courseByIdData?.course.isPublished ? "Unpublished" : "Publish"}
           </Button>
-          <Button>Remove Cousre</Button>
+          <Button onClick={handleRemoveCourse} disabled={removeCourseIsloading}>
+            {removeCourseIsloading ? (
+              <>
+                <Loader2 />
+                Please wait...
+              </>
+            ) : (
+              "Remove Course"
+            )}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>

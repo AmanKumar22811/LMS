@@ -8,6 +8,7 @@ import courseRoute from "./routes/course.route.js";
 import mediaRoute from "./routes/media.route.js";
 import purchaseRoute from "./routes/coursePurchase.route.js";
 import courseProgressRoute from "./routes/courseProgress.route.js";
+import path from "path";
 
 dotenv.config({});
 connectDB();
@@ -15,6 +16,8 @@ connectDB();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
+const _dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -32,11 +35,10 @@ app.use("/api/v1/media", mediaRoute);
 app.use("/api/v1/purchase", purchaseRoute);
 app.use("/api/v1/progress", courseProgressRoute);
 
-app.get("/", (_, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Hello , I am coming from backend",
-  });
+app.use(express.static(path.join(_dirname, "/client/dist")));
+
+app.get("*", (_, res) => {
+  res.sendFile(path.resolve(_dirname, "client", "dist", "index.html"));
 });
 
 app.listen(PORT, () => console.log(`Server listen at port ${PORT}`));
